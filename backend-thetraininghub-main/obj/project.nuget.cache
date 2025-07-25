@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "gTFNSeAImgc=",
+  "dgSpecHash": "XD5yTY2AUdk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\altf4\\Desktop\\AA2-CS\\aa2-alberto-rodriguez-penalva\\aa2-alberto-rodriguez-penalva.csproj",
+  "projectFilePath": "C:\\Users\\altf4\\Desktop\\AA2-Vue-2\\TFG\\backend-thetraininghub-main\\aa2-alberto-rodriguez-penalva.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\altf4\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.4\\microsoft.aspnetcore.authentication.jwtbearer.8.0.4.nupkg.sha512",
     "C:\\Users\\altf4\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.11\\microsoft.aspnetcore.openapi.8.0.11.nupkg.sha512",
