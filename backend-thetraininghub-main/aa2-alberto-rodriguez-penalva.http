@@ -1,0 +1,6 @@
+@aa2_alberto_rodriguez_penalva_HostAddress = http://localhost:5095
+
+GET {{aa2_alberto_rodriguez_penalva_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

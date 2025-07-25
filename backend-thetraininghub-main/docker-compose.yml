@@ -1,0 +1,40 @@
+services: 
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "3786:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "a26873@svalero.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+
+  api:
+    image: albertorodriguezpenalva/back-aws:latest
+    restart: always
+    ports:
+      - "6873:6873"
+    depends_on:
+      - postgres
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=password"
+
+  front :
+    image: albertorodriguezpenalva/fronted:latest
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - api

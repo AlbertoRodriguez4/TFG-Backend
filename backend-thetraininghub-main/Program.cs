@@ -1,0 +1,85 @@
+using AA2_CS.Model;
+using AA2_CS.Service;
+using Microsoft.EntityFrameworkCore;
+using AA2_CS.Database;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using AA2_CS.JWT;
+using AA2_CS.Services;
+using AA2_CS.Repository;
+
+var builder = WebApplication.CreateBuilder(args);
+Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://+:6873");
+
+// Configuración CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins("http://localhost:5173", "http://ad81312a153d54f0cae0f77ea12b8763-960016076.us-east-1.elb.amazonaws.com") // Actualiza el puerto del frontend
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()); // Permitir cookies/autenticación si es necesario
+});
+
+// Agregar servicios a la contenedor
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();  // Asegúrate de agregar esto para registrar los controladores
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql("Host=mypostgredb.cfp4unu0zy6e.us-east-1.rds.amazonaws.com;Port=5432;Database=postgres;Username=postgres;Password=Ab11072004.")); // Para conexión con PostgreSQL, camviar esto al appsettings.json
+
+// Registrar los servicios específicos
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<PlanService>();
+builder.Services.AddScoped<PurchaseService>();
+builder.Services.AddScoped<ItemService>();
+builder.Services.AddScoped<JWTConfigurer>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ItemRepository, ItemRepository>();
+builder.Services.AddScoped<PlanRepository, PlanRepository>();
+builder.Services.AddScoped<PurchaseRepository, PurchaseRepository>();
+builder.Services.AddScoped<RoomRepository, RoomRepository>();
+builder.Services.AddScoped<UserRepository, UserRepository>();
+
+// Configuración de JWT para autenticación
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        var config = builder.Configuration;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true, //verificar que el issuer sea válido
+            ValidateAudience = true, //verificar que el audience sea valido
+            ValidateLifetime = true, //verificar que el token no haya expirado
+            ValidateIssuerSigningKey = true, //verificar la clave de firma sea válida
+            ValidIssuer = config["JwtSettings:Issuer"], //el emisor que se espera (The Training Hub)
+            ValidAudience = config["JwtSettings:Audience"], //la audiencia que se espera (The Training Hub Users)
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"])) //clave secreta usada para validar la firma del token
+        };
+    });
+
+builder.Services.AddAuthorization(); // Agregar el servicio de autorización
+
+var app = builder.Build();
+
+// Configurar el pipeline de la solicitud HTTP
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// Usar CORS antes de los controladores
+app.UseCors("AllowFrontend");
+app.Urls.Add("http://0.0.0.0:6873");
+
+app.UseHttpsRedirection();
+app.UseAuthentication(); // Usar la autenticación para JWT y los tokens
+app.UseAuthorization();
+
+// Mapeo de controladores
+app.MapControllers();
+
+app.Run();

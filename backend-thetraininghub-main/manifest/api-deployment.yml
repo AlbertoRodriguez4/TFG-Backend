@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: albertorodriguezpenalva/back-aws:latest
+        ports:
+        - containerPort: 6873
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ConnectionStrings__DefaultConnection
+          value: "Host=mypostgredb.cfp4unu0zy6e.us-east-1.rds.amazonaws.com;Port=5432;Database=postgres;Username=postgres;Password=Ab11072004."
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+spec:
+  type: LoadBalancer 
+  selector:
+    app: api
+  ports:
+  - port: 6873
+    targetPort: 6873
