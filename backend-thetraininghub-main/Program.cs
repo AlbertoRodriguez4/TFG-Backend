@@ -16,7 +16,7 @@ Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://+:6873");
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
-        policy => policy.WithOrigins("http://localhost:5173", "http://ad81312a153d54f0cae0f77ea12b8763-960016076.us-east-1.elb.amazonaws.com") // Actualiza el puerto del frontend
+        policy => policy.WithOrigins("http://localhost:5173") // Actualiza el puerto del frontend
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials()); // Permitir cookies/autenticación si es necesario
@@ -27,7 +27,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();  // Asegúrate de agregar esto para registrar los controladores
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql("Host=mypostgredb.cfp4unu0zy6e.us-east-1.rds.amazonaws.com;Port=5432;Database=postgres;Username=postgres;Password=Ab11072004.")); // Para conexión con PostgreSQL, camviar esto al appsettings.json
+    options.UseNpgsql("Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=password")); // Para conexión con PostgreSQL
 
 // Registrar los servicios específicos
 builder.Services.AddScoped<UserService>();

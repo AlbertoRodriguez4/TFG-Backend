@@ -21,7 +21,7 @@ services:
       - postgres
 
   api:
-    image: albertorodriguezpenalva/back-aws:latest
+    image: albertorodriguezpenalva/tfg-img:latest
     restart: always
     ports:
       - "6873:6873"
