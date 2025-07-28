@@ -32,7 +32,7 @@ services:
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=password"
 
   front :
-    image: albertorodriguezpenalva/fronted:latest
+    image: albertorodriguezpenalva/tfg-front:latest
     restart: always
     ports:
       - "5173:80"
