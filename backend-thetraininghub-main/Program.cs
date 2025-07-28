@@ -29,6 +29,8 @@ builder.Services.AddControllers();  // Asegúrate de agregar esto para registrar
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql("Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=password")); // Para conexión con PostgreSQL
 
+
+
 // Registrar los servicios específicos
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RoomService>();
@@ -64,6 +66,11 @@ builder.Services.AddAuthorization(); // Agregar el servicio de autorización
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();  // Aplica migraciones pendientes
+}
 // Configurar el pipeline de la solicitud HTTP
 if (app.Environment.IsDevelopment())
 {

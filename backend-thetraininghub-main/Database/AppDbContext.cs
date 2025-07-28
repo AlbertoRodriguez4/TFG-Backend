@@ -12,40 +12,42 @@ public class AppDbContext : DbContext
     public DbSet<Purchase> Purchases { get; set; }
     public DbSet<Room> Rooms { get; set; }
     public DbSet<UserRoom> UserRooms { get; set; }
+    public DbSet<Model.Task> Tasks { get; set; }
 
    protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
-    // Mapeo de tablas a minúsculas
-    modelBuilder.Entity<User>().ToTable("users");
+    {
+        // Mapeo de tablas a minúsculas
+        modelBuilder.Entity<User>().ToTable("users");
 
-    modelBuilder.Entity<Plan>().ToTable("plans");
-    modelBuilder.Entity<Item>().ToTable("items");
-    modelBuilder.Entity<Purchase>().ToTable("purchases");
-    modelBuilder.Entity<Room>().ToTable("rooms");
-    modelBuilder.Entity<UserRoom>().ToTable("usersrooms");
+        modelBuilder.Entity<Plan>().ToTable("plans");
+        modelBuilder.Entity<Item>().ToTable("items");
+        modelBuilder.Entity<Purchase>().ToTable("purchases");
+        modelBuilder.Entity<Room>().ToTable("rooms");
+        modelBuilder.Entity<UserRoom>().ToTable("usersrooms");
+        modelBuilder.Entity<Model.Task>().ToTable("tasks");
 
-    // Configuración de clave compuesta para la tabla intermedia UserRoom
-    modelBuilder.Entity<UserRoom>()
-        .HasKey(ur => new { ur.userid, ur.roomid });
+        // Configuración de clave compuesta para la tabla intermedia UserRoom
+        modelBuilder.Entity<UserRoom>()
+            .HasKey(ur => new { ur.userid, ur.roomid });
 
-    modelBuilder.Entity<UserRoom>()
-        .Property(ur => ur.userid).HasColumnName("userid");
-    modelBuilder.Entity<UserRoom>()
-        .Property(ur => ur.roomid).HasColumnName("roomid");
+        modelBuilder.Entity<UserRoom>()
+            .Property(ur => ur.userid).HasColumnName("userid");
+        modelBuilder.Entity<UserRoom>()
+            .Property(ur => ur.roomid).HasColumnName("roomid");
 
-    // Configurar relaciones sin usar propiedades de navegación
-    modelBuilder.Entity<UserRoom>()
-        .HasOne(ur => ur.User)  // Relación con User
-        .WithMany()  // No necesidad de la propiedad de navegación en User
-        .HasForeignKey(ur => ur.userid)
-        .OnDelete(DeleteBehavior.Cascade);
+        // Configurar relaciones sin usar propiedades de navegación
+        modelBuilder.Entity<UserRoom>()
+            .HasOne(ur => ur.User)  // Relación con User
+            .WithMany()  // No necesidad de la propiedad de navegación en User
+            .HasForeignKey(ur => ur.userid)
+            .OnDelete(DeleteBehavior.Cascade);
 
-    modelBuilder.Entity<UserRoom>()
-        .HasOne(ur => ur.Room)  // Relación con Room
-        .WithMany()  // No necesidad de la propiedad de navegación en Room
-        .HasForeignKey(ur => ur.roomid)
-        .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<UserRoom>()
+            .HasOne(ur => ur.Room)  // Relación con Room
+            .WithMany()  // No necesidad de la propiedad de navegación en Room
+            .HasForeignKey(ur => ur.roomid)
+            .OnDelete(DeleteBehavior.Cascade);
 
-    base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(modelBuilder);
     }
 }

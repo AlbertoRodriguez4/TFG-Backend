@@ -63,42 +63,42 @@ CREATE TABLE UsersRooms (
 -- INSERTS
 
 -- Users
-INSERT INTO Users (Name, Email, PasswordHash, Level, Strength, Endurance, ConsistencyStreak, Gold, Role) VALUES
+INSERT INTO users (Name, Email, PasswordHash, Level, Strength, Endurance, ConsistencyStreak, Gold, Role) VALUES
 ('Alice', 'alice@example.com', 'hashedpassword1', 3, 10, 8, 5, 200, 'userNormal'),
 ('Bob', 'bob@example.com', 'hashedpassword2', 2, 5, 4, 2, 100, 'userMaster'),
 ('Charlie', 'charlie@example.com', 'hashedpassword3', 5, 20, 10, 7, 500, 'userStaff');
 
 -- Items
-INSERT INTO Items (Name, Type, Bonus, Price) VALUES
+INSERT INTO items (Name, Type, Bonus, Price) VALUES
 ('Iron Dumbbell', 'Strength', 5, 50),
 ('Endurance Boots', 'Endurance', 3, 40),
 ('Gold Sword', 'Strength', 10, 150),
 ('Marathon Shoes', 'Endurance', 8, 120);
 
 -- Plans
-INSERT INTO Plans (UserId, Description) VALUES
+INSERT INTO plans (UserId, Description) VALUES
 (1, 'Workout plan: Strength training every Monday and Wednesday'),
 (2, 'Endurance plan: Running 3 times a week'),
 (3, 'Hybrid plan: Mix of strength and endurance');
 
 -- Purchases
-INSERT INTO Purchases (UserId, ItemId) VALUES
-(1, 1), 
-(1, 2), 
-(2, 4), 
-(3, 3); 
+INSERT INTO purchases (UserId, ItemId, purchasedate) VALUES
+(1, 1, '2023-06-01 10:00:00'), 
+(1, 2, '2023-06-01 10:00:00'), 
+(2, 4, '2023-06-01 10:00:00'), 
+(3, 3, '2023-06-01 10:00:00'),; 
 
 -- Rooms
-INSERT INTO Rooms (Name, MinLevel, MinStats, MinConsistency) VALUES
+INSERT INTO rooms (Name, MinLevel, MinStats, MinConsistency) VALUES
 ('Beginner Gym', 1, 0, 0),
 ('Intermediate Zone', 3, 10, 2),
 ('Elite Arena', 5, 25, 5);
 
 -- UsersRooms
-INSERT INTO UsersRooms (UserId, RoomId) VALUES
-(1, 1), 
-(1, 2), 
-(2, 1), 
-(3, 1), 
-(3, 2), 
-(3, 3);
+INSERT INTO usersrooms (UserId, RoomId) VALUES
+(1, 7), 
+(1, 8), 
+(2, 9), 
+(3, 10), 
+(3, 11), 
+(3, 12);
