@@ -7,8 +7,8 @@ namespace AA2_CS.Model
         public string description { get; set; }
         public int difficulty { get; set; }
         public int reward { get; set; }
-        public bool isCompleted { get; set; } = false;
-        public DateTime createdAt { get; set; } = DateTime.Now;
+        public bool iscompleted { get; set; } = false;
+        public DateTime createdat { get; set; } = DateTime.Now;
         public int userId { get; set; } // Foreign key to User
          public Task() { }
 

@@ -96,9 +96,17 @@ INSERT INTO rooms (Name, MinLevel, MinStats, MinConsistency) VALUES
 
 -- UsersRooms
 INSERT INTO usersrooms (UserId, RoomId) VALUES
-(1, 7), 
-(1, 8), 
-(2, 9), 
-(3, 10), 
-(3, 11), 
-(3, 12);
+(1, 1), 
+(1, 2), 
+(2, 3), 
+(3, 3), 
+(3, 2), 
+(3, 1);
+
+INSERT INTO tasks ("userId", "createdat", "id", "difficulty", "reward", "iscompleted", "name", "description")
+VALUES
+(1, NOW(), 1, 2, 50, false, 'Estudiar matemáticas', 'Repasar los capítulos 3 y 4 del libro de álgebra'),
+(2, NOW() - INTERVAL '1 day', 2, 3, 70, false, 'Hacer ejercicio', '30 minutos de trote suave y estiramientos'),
+(3, NOW() - INTERVAL '2 days', 3, 1, 30, true, 'Leer un libro', 'Leer 20 páginas de la novela asignada'),
+(1, NOW(), 4, 4, 100, false, 'Desarrollar código', 'Implementar la función de login en el backend'),
+(2, NOW(), 5, 2, 40, true, 'Organizar el escritorio', 'Limpiar y organizar documentos del escritorio');

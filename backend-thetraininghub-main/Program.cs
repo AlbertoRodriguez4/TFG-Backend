@@ -27,7 +27,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();  // Asegúrate de agregar esto para registrar los controladores
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql("Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=password")); // Para conexión con PostgreSQL
+    options.UseNpgsql("Host=localhost;Port=3786;Database=postgres;Username=postgres;Password=password")); // Para conexión con PostgreSQL, cambiado "postgres" a "localhost" y el puerto, de 5432 a 3786
 
 
 
@@ -44,6 +44,8 @@ builder.Services.AddScoped<PlanRepository, PlanRepository>();
 builder.Services.AddScoped<PurchaseRepository, PurchaseRepository>();
 builder.Services.AddScoped<RoomRepository, RoomRepository>();
 builder.Services.AddScoped<UserRepository, UserRepository>();
+builder.Services.AddScoped<TasksRepository, TasksRepository>();
+builder.Services.AddScoped<TasksService, TasksService>();
 
 // Configuración de JWT para autenticación
 builder.Services.AddAuthentication("Bearer")
