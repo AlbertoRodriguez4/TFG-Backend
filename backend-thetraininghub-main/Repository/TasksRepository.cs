@@ -81,7 +81,7 @@ namespace AA2_CS.Repository
                 user.strength += task.reward;
             }
 
-            user.level += task.reward / 100; 
+            user.level += task.reward / 100;
 
             user.gold += task.reward;
 

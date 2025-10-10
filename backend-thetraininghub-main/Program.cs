@@ -46,6 +46,8 @@ builder.Services.AddScoped<RoomRepository, RoomRepository>();
 builder.Services.AddScoped<UserRepository, UserRepository>();
 builder.Services.AddScoped<TasksRepository, TasksRepository>();
 builder.Services.AddScoped<TasksService, TasksService>();
+builder.Services.AddHttpClient<GeocodificacionRepository, GeocodificacionRepository>();
+builder.Services.AddScoped<GeocodificacionService, GeocodificacionService>();
 
 // Configuración de JWT para autenticación
 builder.Services.AddAuthentication("Bearer")
