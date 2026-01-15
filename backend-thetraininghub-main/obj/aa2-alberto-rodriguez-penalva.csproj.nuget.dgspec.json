@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\altf4\\Desktop\\AA2-Vue-2\\TFG\\backend-thetraininghub-main\\aa2-alberto-rodriguez-penalva.csproj": {}
+    "C:\\Users\\alber\\Desktop\\TFG como lo borre me suicido\\Backend\\TFG-Backend\\backend-thetraininghub-main\\aa2-alberto-rodriguez-penalva.csproj": {}
   },
   "projects": {
-    "C:\\Users\\altf4\\Desktop\\AA2-Vue-2\\TFG\\backend-thetraininghub-main\\aa2-alberto-rodriguez-penalva.csproj": {
+    "C:\\Users\\alber\\Desktop\\TFG como lo borre me suicido\\Backend\\TFG-Backend\\backend-thetraininghub-main\\aa2-alberto-rodriguez-penalva.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\altf4\\Desktop\\AA2-Vue-2\\TFG\\backend-thetraininghub-main\\aa2-alberto-rodriguez-penalva.csproj",
+        "projectUniqueName": "C:\\Users\\alber\\Desktop\\TFG como lo borre me suicido\\Backend\\TFG-Backend\\backend-thetraininghub-main\\aa2-alberto-rodriguez-penalva.csproj",
         "projectName": "aa2-alberto-rodriguez-penalva",
-        "projectPath": "C:\\Users\\altf4\\Desktop\\AA2-Vue-2\\TFG\\backend-thetraininghub-main\\aa2-alberto-rodriguez-penalva.csproj",
-        "packagesPath": "C:\\Users\\altf4\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\altf4\\Desktop\\AA2-Vue-2\\TFG\\backend-thetraininghub-main\\obj\\",
+        "projectPath": "C:\\Users\\alber\\Desktop\\TFG como lo borre me suicido\\Backend\\TFG-Backend\\backend-thetraininghub-main\\aa2-alberto-rodriguez-penalva.csproj",
+        "packagesPath": "C:\\Users\\alber\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\alber\\Desktop\\TFG como lo borre me suicido\\Backend\\TFG-Backend\\backend-thetraininghub-main\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\altf4\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\alber\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -101,7 +101,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.417/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
