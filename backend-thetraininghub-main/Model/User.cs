@@ -12,13 +12,14 @@ namespace AA2_CS.Model
         public int consistencystreak { get; set; } = 0;
         public int gold { get; set; } = 0;
         public string role { get; set; } = string.Empty;
+        public int experience { get; set; } = 0;
 
         // Relación con las salas a través de la tabla intermedia UserRoom
        
 
         public User() { }
 
-        public User(string name, string email, string passwordHash, int level, int strength, int endurance, int consistencyStreak, int gold, string role)
+        public User(string name, string email, string passwordHash, int level, int strength, int endurance, int consistencyStreak, int gold, string role, int experience)
         {
             this.name = name;
             this.email = email;
@@ -29,6 +30,7 @@ namespace AA2_CS.Model
             this.consistencystreak = consistencyStreak;
             this.gold = gold;
             this.role = role;
+            this.experience = experience;
         }
     }
 }

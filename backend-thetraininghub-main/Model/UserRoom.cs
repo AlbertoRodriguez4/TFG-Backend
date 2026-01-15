@@ -6,7 +6,7 @@ namespace AA2_CS.Model
     {
         public int userid { get; set; }
 
-        [JsonIgnore]  // Evitar la serialización del ciclo en la propiedad User
+        // [JsonIgnore]  // Evitar la serialización del ciclo en la propiedad User
         public virtual User User { get; set; }
 
         public int roomid { get; set; }
