@@ -22,6 +22,7 @@ namespace AA2_CS.Controllers
         {
             try
             {
+                // request.room ya trae description y date automáticamente del JSON
                 var roomId = _roomService.CreateRoomWithUser(request.room, request.userid);
                 return Ok(new { roomId });
             }
@@ -32,7 +33,7 @@ namespace AA2_CS.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = Roles.userStaff)]
+        // [Authorize(Roles = Roles.userStaff)] // Descomenta si usas roles
         public IActionResult UpdateRoom(int id, [FromBody] Room room)
         {
             try
@@ -40,6 +41,7 @@ namespace AA2_CS.Controllers
                 if (room == null || room.id != id)
                     return BadRequest("Room data is invalid.");
 
+                // room trae los nuevos campos actualizados
                 var result = _roomService.Update(room);
                 return result > 0 ? Ok(room) : NotFound("Room not found.");
             }
@@ -50,7 +52,7 @@ namespace AA2_CS.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = Roles.userStaff)]
+        // [Authorize(Roles = Roles.userStaff)]
         public IActionResult DeleteRoom(int id)
         {
             try
@@ -80,6 +82,22 @@ namespace AA2_CS.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error al obtener las salas: {ex.Message}");
+            }
+        }
+        
+        // Endpoint extra si quieres traer salas + usuarios en una sola llamada
+        [HttpGet("with-users")]
+        [Authorize]
+        public IActionResult GetAllRoomsWithUsers()
+        {
+            try
+            {
+                var result = _roomService.FindAllWithUsers();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al obtener salas con usuarios: {ex.Message}");
             }
         }
 
@@ -124,7 +142,7 @@ namespace AA2_CS.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error al ordenar salas por nivel ascendente: {ex.Message}");
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
 
@@ -139,7 +157,7 @@ namespace AA2_CS.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error al ordenar salas por nivel descendente: {ex.Message}");
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
 
@@ -154,7 +172,7 @@ namespace AA2_CS.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error al ordenar salas por estadísticas ascendentes: {ex.Message}");
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
 
@@ -169,7 +187,7 @@ namespace AA2_CS.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error al ordenar salas por estadísticas descendentes: {ex.Message}");
+                return StatusCode(500, $"Error: {ex.Message}");
             }
         }
     }

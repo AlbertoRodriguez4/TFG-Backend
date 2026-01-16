@@ -19,6 +19,8 @@ namespace AA2_CS.Repository
             if (user == null)
                 throw new Exception($"No se encontró el usuario con ID {userId}");
 
+            // Entity Framework guardará automáticamente description y date
+            // porque ya están en el objeto 'entity' que llega aquí.
             _context.Rooms.Add(entity);
             _context.SaveChanges();
 
@@ -34,10 +36,12 @@ namespace AA2_CS.Repository
 
             return entity.id;
         }
+
         public List<Room> FindAll()
         {
             return _context.Rooms.ToList();
         }
+
         public int Update(Room entity)
         {
             var room = _context.Rooms.FirstOrDefault(r => r.id == entity.id);
@@ -47,6 +51,11 @@ namespace AA2_CS.Repository
                 room.minlevel = entity.minlevel;
                 room.minstats = entity.minstats;
                 room.minconsistency = entity.minconsistency;
+                
+                // <--- NUEVO: Actualizamos los nuevos campos
+                room.description = entity.description;
+                room.date = entity.date; 
+                // ------------------------------------------
 
                 _context.SaveChanges();
                 return 1;
@@ -71,7 +80,16 @@ namespace AA2_CS.Repository
             return (from ur in _context.UserRooms
                     join u in _context.Users on ur.userid equals u.id
                     join r in _context.Rooms on ur.roomid equals r.id
-                    group new { User = u, Room = r } by new { r.id, r.name, r.minlevel, r.minstats, r.minconsistency } into roomGroup
+                    // <--- IMPORTANTE: Añadir description y date al group by
+                    group new { User = u, Room = r } by new { 
+                        r.id, 
+                        r.name, 
+                        r.minlevel, 
+                        r.minstats, 
+                        r.minconsistency, 
+                        r.description, // <--- NUEVO
+                        r.date         // <--- NUEVO
+                    } into roomGroup
                     select new UserRoomDTO
                     {
                         room = new Room
@@ -80,7 +98,9 @@ namespace AA2_CS.Repository
                             name = roomGroup.Key.name,
                             minlevel = roomGroup.Key.minlevel,
                             minstats = roomGroup.Key.minstats,
-                            minconsistency = roomGroup.Key.minconsistency
+                            minconsistency = roomGroup.Key.minconsistency,
+                            description = roomGroup.Key.description, // <--- NUEVO
+                            date = roomGroup.Key.date                // <--- NUEVO
                         },
                         users = roomGroup.Select(g => new UserDTO
                         {

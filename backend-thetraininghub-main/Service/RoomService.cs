@@ -14,6 +14,7 @@ namespace AA2_CS.Service
 
         public int Add(Room entity)
         {
+            // Mantenemos la lógica de forzar el uso de CreateRoomWithUser
             throw new NotImplementedException("Use CreateRoomWithUser instead.");
         }
 
