@@ -5,6 +5,8 @@ namespace AA2_CS.Model
         public int id { get; set; }
         public int userid { get; set; }
         public int itemid { get; set; }
+        public Item? Item { get; set; }
+        public User? User { get; set; }
         public DateTime purchasedate { get; set; } = DateTime.UtcNow;
 
         
