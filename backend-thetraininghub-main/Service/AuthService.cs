@@ -27,6 +27,7 @@ namespace AA2_CS.Services
 
         public string Register(User user)
         {
+            _userService.Add(user);
             return _jwtConfigurer.GenerateToken(user);
         }
         public bool HasAccessToResource(int requestedUserID, ClaimsPrincipal user) 

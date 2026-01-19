@@ -17,7 +17,7 @@ namespace AA2_CS.Controllers
 
 
         [HttpPost]
-        [Authorize]
+        // [Authorize]
         public IActionResult AddUser([FromBody] User user)
         {
             try
