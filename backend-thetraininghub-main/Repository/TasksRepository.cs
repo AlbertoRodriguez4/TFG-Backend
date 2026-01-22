@@ -72,13 +72,18 @@ namespace AA2_CS.Repository
 
             task.iscompleted = true;
 
-            if (task.difficulty <= 2)
+            if (task.trainingfocus == "strength")
             {
-                user.endurance += task.reward;
+                user.strength += task.reward / 10;
             }
-            else
+            else if (task.trainingfocus == "endurance")
             {
-                user.strength += task.reward;
+                user.endurance += task.reward / 10;
+            }
+            else if (task.trainingfocus == "ambas")
+            {
+                user.strength += task.reward / 20;
+                user.endurance += task.reward / 20;
             }
 
             user.level += task.reward / 100;
