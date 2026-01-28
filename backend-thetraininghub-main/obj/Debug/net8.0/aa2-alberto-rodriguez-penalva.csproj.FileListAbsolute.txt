@@ -403,3 +403,4 @@ C:\Users\alber\Desktop\TFG como lo borre me suicido\Backend\TFG-Backend\backend-
 C:\Users\alber\Desktop\TFG como lo borre me suicido\Backend\TFG-Backend\backend-thetraininghub-main\obj\Debug\net8.0\aa2-alberto-rodriguez-penalva.pdb
 C:\Users\alber\Desktop\TFG como lo borre me suicido\Backend\TFG-Backend\backend-thetraininghub-main\obj\Debug\net8.0\aa2-alberto-rodriguez-penalva.genruntimeconfig.cache
 C:\Users\alber\Desktop\TFG como lo borre me suicido\Backend\TFG-Backend\backend-thetraininghub-main\obj\Debug\net8.0\ref\aa2-alberto-rodriguez-penalva.dll
+C:\Users\alber\Desktop\TFG como lo borre me suicido\Backend\TFG-Backend\backend-thetraininghub-main\bin\Debug\net8.0\BCrypt.Net-Next.dll
