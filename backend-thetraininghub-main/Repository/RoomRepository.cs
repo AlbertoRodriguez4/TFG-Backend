@@ -18,9 +18,6 @@ namespace AA2_CS.Repository
             var user = _context.Users.Find(userId);
             if (user == null)
                 throw new Exception($"No se encontró el usuario con ID {userId}");
-
-            // Entity Framework guardará automáticamente description y date
-            // porque ya están en el objeto 'entity' que llega aquí.
             _context.Rooms.Add(entity);
             _context.SaveChanges();
 
@@ -52,10 +49,10 @@ namespace AA2_CS.Repository
                 room.minstats = entity.minstats;
                 room.minconsistency = entity.minconsistency;
                 
-                // <--- NUEVO: Actualizamos los nuevos campos
+
                 room.description = entity.description;
                 room.date = entity.date; 
-                // ------------------------------------------
+                room.localization = entity.localization;
 
                 _context.SaveChanges();
                 return 1;
@@ -87,8 +84,9 @@ namespace AA2_CS.Repository
                         r.minlevel, 
                         r.minstats, 
                         r.minconsistency, 
-                        r.description, // <--- NUEVO
-                        r.date         // <--- NUEVO
+                        r.description, 
+                        r.date,
+                        r.localization     
                     } into roomGroup
                     select new UserRoomDTO
                     {
@@ -99,8 +97,9 @@ namespace AA2_CS.Repository
                             minlevel = roomGroup.Key.minlevel,
                             minstats = roomGroup.Key.minstats,
                             minconsistency = roomGroup.Key.minconsistency,
-                            description = roomGroup.Key.description, // <--- NUEVO
-                            date = roomGroup.Key.date                // <--- NUEVO
+                            description = roomGroup.Key.description, 
+                            date = roomGroup.Key.date,
+                            localization = roomGroup.Key.localization             
                         },
                         users = roomGroup.Select(g => new UserDTO
                         {
