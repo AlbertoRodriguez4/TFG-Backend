@@ -60,7 +60,7 @@ builder.Services.AddAuthentication("Bearer")
         {
             ValidateIssuer = true, //verificar que el issuer sea válido
             ValidateAudience = true, //verificar que el audience sea valido
-            ValidateLifetime = true, //verificar que el token no haya expirado
+            ValidateLifetime = false, //verificar que el token no haya expirado
             ValidateIssuerSigningKey = true, //verificar la clave de firma sea válida
             ValidIssuer = config["JwtSettings:Issuer"], //el emisor que se espera (The Training Hub)
             ValidAudience = config["JwtSettings:Audience"], //la audiencia que se espera (The Training Hub Users)

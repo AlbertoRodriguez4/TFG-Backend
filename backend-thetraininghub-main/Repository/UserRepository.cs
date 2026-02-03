@@ -25,7 +25,6 @@ namespace AA2_CS.Repository
             return entity.id;
         }
 
-        // ... (Update y UpdateById se mantienen similares, ver nota abajo) ...
 
         public int Update(User entity)
         {

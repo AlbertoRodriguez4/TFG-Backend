@@ -3,6 +3,7 @@ using AA2_CS.Model;
 using AA2_CS.Service;
 using Microsoft.AspNetCore.Authorization;
 using AA2_CS.Services;
+using System.Security.Claims; // Necesario para leer los Claims
 
 namespace AA2_CS.Controllers
 {
@@ -45,7 +46,7 @@ namespace AA2_CS.Controllers
 
             if (!_authService.HasAccessToResource(id, User))
             {
-                return Forbid(); 
+                return Forbid();
             }
 
             try
@@ -124,18 +125,32 @@ namespace AA2_CS.Controllers
             }
         }
 
-        [HttpGet("userEmail/{email}/userPassword/{password}")]
-        [Authorize]
-        public IActionResult GetPurchasesByUse(string email, string password)
+        [HttpGet("my-purchases")] // Ruta limpia, sin parámetros sensibles
+        [Authorize] // Esto asegura que solo entre alguien con Token válido
+        public IActionResult GetMyPurchases()
         {
             try
             {
-                var purchases = _purchaseService.FindByUser(email, password); // Busca compras por usuario
+                // 1. Extraer el ID del usuario directamente del Token
+                // El ClaimTypes.NameIdentifier suele ser donde se guarda el ID en el JWT
+                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                // Si por alguna razón el token no tiene ID (raro si está autorizado)
+                if (string.IsNullOrEmpty(userIdString))
+                {
+                    return Unauthorized("Token inválido: No contiene ID de usuario.");
+                }
+
+                int userId = int.Parse(userIdString);
+
+                // 2. Llamar al servicio usando SOLO el ID (ya no hace falta password)
+                var purchases = _purchaseService.FindByUserId(userId);
+
                 return Ok(purchases);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error al obtener las compras del usuario: {ex.Message}");
+                return StatusCode(500, $"Error al obtener compras: {ex.Message}");
             }
         }
     }

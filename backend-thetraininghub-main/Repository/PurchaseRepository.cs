@@ -1,6 +1,8 @@
 using AA2_CS.Database;
 using AA2_CS.Model;
 using Microsoft.EntityFrameworkCore;
+// Asegúrate de importar donde tengas tu PurchaseDTO
+// using AA2_CS.DTOs; 
 
 namespace AA2_CS.Repository
 {
@@ -13,6 +15,7 @@ namespace AA2_CS.Repository
             _context = context;
         }
 
+        // ... Add, Delete, FindAll, FindById, Update SE QUEDAN IGUAL ...
         public int Add(Purchase purchase)
         {
             var user = _context.Users.FirstOrDefault(u => u.id == purchase.userid);
@@ -22,6 +25,8 @@ namespace AA2_CS.Repository
             if (user == null || item == null)
                 throw new ArgumentException("User or Item not found.");
 
+            // NOTA: Idealmente esta lógica de oro debería ir en el Service (como la XP),
+            // pero está bien dejarla aquí por ahora para no romper nada más.
             if (user.gold < item.price)
                 throw new InvalidOperationException("El usuario no tiene suficiente oro.");
 
@@ -60,11 +65,6 @@ namespace AA2_CS.Repository
             throw new NotImplementedException("Search by characteristic not implemented.");
         }
 
-        public List<Purchase> FindByUserId(int id)
-        {
-            return _context.Purchases.Where(p => p.userid == id).ToList();
-        }
-
         public int Update(Purchase purchase)
         {
             var existing = _context.Purchases.FirstOrDefault(p => p.id == purchase.id);
@@ -79,18 +79,18 @@ namespace AA2_CS.Repository
             return 0;
         }
 
-        public List<PurchaseDTO> FindByUser(string email, string password)
+        // --- CAMBIO IMPORTANTE AQUÍ ---
+        
+        // Hemos fusionado la lógica: Busca por ID (seguro) y devuelve DTOs (útil para el front)
+        public List<PurchaseDTO> FindByUserId(int userId)
         {
-            var user = _context.Users.FirstOrDefault(u => u.email == email && u.passwordhash == password);
-            if (user == null)
-            {
-                throw new UnauthorizedAccessException($"No se encontró el usuario con email: {email} y password hash: {password}");
-            }
-
+            // Nota: Ya no comprobamos password aquí. Confiamos en que si el Controller
+            // nos pasa un userId, es porque el Token era válido.
 
             var purchases = (from p in _context.Purchases
                              join item in _context.Items on p.itemid equals item.id
-                             where p.userid == user.id
+                             join user in _context.Users on p.userid equals user.id
+                             where p.userid == userId
                              select new PurchaseDTO
                              {
                                  PurchaseId = p.id,

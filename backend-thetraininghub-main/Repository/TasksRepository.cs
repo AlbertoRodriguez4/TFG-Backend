@@ -32,7 +32,6 @@ namespace AA2_CS.Repository
 
         public List<Model.Task> FindByCharacteristic(string value)
         {
-            _context.Tasks.Include(t => t.userId).Where(t => t.name.Contains(value) || t.description.Contains(value)).ToList();
             return _context.Tasks.Where(t => t.name.Contains(value) || t.description.Contains(value)).ToList();
         }
 
@@ -41,82 +40,26 @@ namespace AA2_CS.Repository
             return _context.Tasks.FirstOrDefault(t => t.id == id);
         }
 
-
         public int Update(Model.Task entity)
         {
             _context.Tasks.Update(entity);
             return _context.SaveChanges();
         }
+        
         public List<Model.Task> FindByUserId(int userId)
         {
             return _context.Tasks.Where(t => t.userId == userId).ToList();
         }
-        public string CompleteTask(int taskId)
+
+        // HE ELIMINADO CompleteTask DE AQUÍ. AHORA IRÁ EN EL SERVICIO.
+        
+        // Método auxiliar para obtener la última completada (lo usaremos en el servicio)
+        public Model.Task GetLastCompletedTask(int userId, int currentTaskId)
         {
-            var task = _context.Tasks.FirstOrDefault(t => t.id == taskId);
-            if (task == null)
-            {
-                return "Task not found";
-            }
-
-            if (task.iscompleted)
-            {
-                return "Task is already completed";
-            }
-
-            var user = _context.Users.FirstOrDefault(u => u.id == task.userId);
-            if (user == null)
-            {
-                return "User not found";
-            }
-
-            task.iscompleted = true;
-
-            if (task.trainingfocus == "strength")
-            {
-                user.strength += task.reward / 10;
-            }
-            else if (task.trainingfocus == "endurance")
-            {
-                user.endurance += task.reward / 10;
-            }
-            else if (task.trainingfocus == "ambas")
-            {
-                user.strength += task.reward / 20;
-                user.endurance += task.reward / 20;
-            }
-
-            user.level += task.reward / 100;
-
-            user.gold += task.reward;
-
-            // Buscar última tarea completada por el usuario
-            var lastCompleted = _context.Tasks
-                .Where(t => t.userId == user.id && t.iscompleted && t.id != task.id)
+            return _context.Tasks
+                .Where(t => t.userId == userId && t.iscompleted && t.id != currentTaskId)
                 .OrderByDescending(t => t.createdat)
                 .FirstOrDefault();
-
-            if (lastCompleted != null)
-            {
-                var previousDate = lastCompleted.createdat.Date;
-                var currentDate = task.createdat.Date;
-
-                if ((currentDate - previousDate).TotalDays == 1)
-                {
-                    user.consistencystreak += 1;
-                }
-                else if ((currentDate - previousDate).TotalDays > 1)
-                {
-                    user.consistencystreak = 1; // Reiniciar la racha si pasó más de un día
-                }
-            }
-            else
-            {
-                user.consistencystreak = 1; // Primera tarea completada
-            }
-
-            _context.SaveChanges();
-            return "Task completed and rewards applied successfully";
         }
     }
 }
