@@ -78,14 +78,8 @@ namespace AA2_CS.Repository
             }
             return 0;
         }
-
-        // --- CAMBIO IMPORTANTE AQUÍ ---
-        
-        // Hemos fusionado la lógica: Busca por ID (seguro) y devuelve DTOs (útil para el front)
         public List<PurchaseDTO> FindByUserId(int userId)
         {
-            // Nota: Ya no comprobamos password aquí. Confiamos en que si el Controller
-            // nos pasa un userId, es porque el Token era válido.
 
             var purchases = (from p in _context.Purchases
                              join item in _context.Items on p.itemid equals item.id

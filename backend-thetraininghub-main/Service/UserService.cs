@@ -4,20 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AA2_CS.Service
 {
-    public class UserService // Si usas interfaz IService<User>, asegúrate de agregar AddExperience a la interfaz o dejarlo como método propio de la clase
+    public class UserService 
     {
         private readonly UserRepository _repository;
+        // 1. AÑADIMOS EL REPOSITORIO DE COMPRAS
+        private readonly PurchaseRepository _purchaseRepository; 
 
-        // CONSTANTES MOVIDAS AQUÍ (Lógica de negocio)
+        // CONSTANTES (Lógica de negocio)
         private const int BASE_XP = 100;
         private const double EXPONENT = 1.5;
 
-        public UserService(UserRepository repository)
+        // 2. ACTUALIZAMOS EL CONSTRUCTOR PARA INYECTAR PurchaseRepository
+        public UserService(UserRepository repository, PurchaseRepository purchaseRepository)
         {
             _repository = repository;
+            _purchaseRepository = purchaseRepository;
         }
 
-        // --- LÓGICA MOVIDA DEL REPOSITORIO AL SERVICIO ---
+        // --- LÓGICA DE EXPERIENCIA (YA ESTABA) ---
 
         public int GetXpRequiredForNextLevel(int currentLevel)
         {
@@ -26,11 +30,9 @@ namespace AA2_CS.Service
 
         public void AddExperience(int userId, int xpGained)
         {
-            // 1. Pedimos el usuario al repo
             var user = _repository.FindById(userId);
             if (user == null) return;
 
-            // 2. Calculamos (Lógica de negocio)
             user.experience += xpGained;
 
             bool leveledUp = false;
@@ -42,18 +44,73 @@ namespace AA2_CS.Service
                 user.level++;
                 leveledUp = true;
 
-                // Recompensas
                 user.gold += 50 * user.level;
                 user.strength += 1;
 
                 xpRequired = GetXpRequiredForNextLevel(user.level);
             }
 
-            // 3. Guardamos los cambios usando el repo
             _repository.Update(user); 
         }
 
+        // --- 3. NUEVOS MÉTODOS PARA EQUIPAR OBJETOS ---
+
+        public string EquipItem(int userId, int itemId)
+        {
+            // A. Buscar al usuario
+            var user = _repository.FindById(userId);
+            if (user == null) return "User not found";
+            Console.WriteLine($"Comprando item {itemId} para usuario {userId}");
+            var purchases = _purchaseRepository.FindByUserId(userId);
+            
+            var purchase = purchases.FirstOrDefault(p => p.ItemId == itemId);
+
+            if (purchase == null)
+            {
+                return "No posees este objeto, debes comprarlo primero.";
+            }
+
+            if (purchase.ItemType == "Strength" || purchase.ItemType == "Fuerza") 
+            {
+                user.equippedStrengthId = itemId;
+            }
+            else if (purchase.ItemType == "Endurance" || purchase.ItemType == "Resistencia")
+            {
+                user.equippedEnduranceId = itemId;
+            }
+            else
+            {
+                return "Este tipo de objeto no se puede equipar.";
+            }
+
+            _repository.Update(user);
+            return "Item equipped successfully";
+        }
+
+        public string UnequipItem(int userId, string type)
+        {
+            var user = _repository.FindById(userId);
+            if (user == null) return "User not found";
+
+            if (type == "Strength" || type == "Fuerza") 
+            {
+                user.equippedStrengthId = null; // Quitar objeto (null)
+            }
+            else if (type == "Endurance" || type == "Resistencia") 
+            {
+                user.equippedEnduranceId = null;
+            }
+            else
+            {
+                return "Tipo de equipo inválido.";
+            }
+
+            _repository.Update(user);
+            return "Item unequipped successfully";
+        }
+
         // ---------------------------------------------------
+        // MÉTODOS CRUD ESTÁNDAR (Sin cambios)
 
         public int Add(User entity)
         {

@@ -126,5 +126,21 @@ namespace AA2_CS.Controllers
                 return StatusCode(500, $"Error al obtener los tres mejores usuarios: {ex.Message}");
             }
         }
+        [HttpPost("equip/{userId}/{itemId}")]
+        public IActionResult EquipItem(int userId, int itemId)
+        {
+            var result = _userService.EquipItem(userId, itemId);
+            if (result.Contains("not found") || result.Contains("No posees"))
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("unequip/{userId}/{type}")]
+        public IActionResult UnequipItem(int userId, string type)
+        {
+            var result = _userService.UnequipItem(userId, type);
+            return Ok(result);
+        }
     }
 }

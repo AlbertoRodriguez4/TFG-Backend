@@ -83,7 +83,9 @@ namespace AA2_CS.JWT
                 // --- NUEVOS CLAIMS DE EXPERIENCIA ---
                 new Claim("experience", user.experience.ToString()),       // XP Actual
                 new Claim("xpRequired", xpRequiredForNextLevel.ToString()), // Meta del nivel
-                new Claim("xpRemaining", xpRemaining.ToString())            // Cuánto falta
+                new Claim("xpRemaining", xpRemaining.ToString()),            // Cuánto falta
+                new Claim("equippedStrengthItemId", user.equippedStrengthId.ToString()),
+                new Claim("equippedEnduranceItemId", user.equippedEnduranceId.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));
