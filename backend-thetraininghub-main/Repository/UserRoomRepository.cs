@@ -16,46 +16,53 @@ namespace AA2_CS.Repository
             _context = context;
         }
 
-        // 1. Obtener TODOS los registros con la información del Usuario y la Sala
+        // 1. Obtener TODOS los registros
         public IEnumerable<UserRoom> GetAll()
         {
             return _context.UserRooms
-                .Include(ur => ur.User) // Carga datos del Usuario
-                .Include(ur => ur.Room) // Carga datos de la Sala
+                .Include(ur => ur.User)
+                    .ThenInclude(u => u.EquippedStrengthItem)
+                .Include(ur => ur.User)
+                    .ThenInclude(u => u.EquippedEnduranceItem)
+                .Include(ur => ur.Room)
                 .ToList();
         }
 
-        // 2. Buscar por ID de USUARIO (Devuelve todas las salas de ese usuario)
+        // 2. Buscar por ID de USUARIO
         public IEnumerable<UserRoom> FindByUserId(int userId)
         {
             return _context.UserRooms
                 .Include(ur => ur.User)
+                    .ThenInclude(u => u.EquippedStrengthItem)
+                .Include(ur => ur.User)
+                    .ThenInclude(u => u.EquippedEnduranceItem)
                 .Include(ur => ur.Room)
                 .Where(ur => ur.userid == userId)
                 .ToList();
         }
 
-        // 3. Buscar por ID de SALA (Devuelve todos los usuarios en esa sala)
-        public IEnumerable<UserRoomResponseDTO> FindUsersByRoomId(int roomId)
+        // 3. Buscar por ID de SALA (CORREGIDO)
+        // Antes devolvía DTO, ahora devuelve UserRoom completo con los items cargados
+        public IEnumerable<UserRoom> FindUsersByRoomId(int roomId)
         {
             return _context.UserRooms
-                .Where(ur => ur.roomid == roomId) // Filtramos por la sala
-                .Select(ur => new UserRoomResponseDTO(
-                    ur.User.name,
-                    ur.User.level,
-                    ur.User.experience,
-                    ur.User.strength,
-                    ur.User.endurance,
-                    ur.User.consistencystreak
-                ))
+                .Include(ur => ur.User)
+                    .ThenInclude(u => u.EquippedStrengthItem) // Cargar item fuerza
+                .Include(ur => ur.User)
+                    .ThenInclude(u => u.EquippedEnduranceItem) // Cargar item resistencia
+                .Include(ur => ur.Room) // Cargar datos de la sala
+                .Where(ur => ur.roomid == roomId)
                 .ToList();
         }
 
-        // 4. Buscar un registro específico (Necesitas AMBOS IDs por ser clave compuesta)
+        // 4. Buscar un registro específico
         public UserRoom? FindByCompositeKey(int userId, int roomId)
         {
             return _context.UserRooms
                 .Include(ur => ur.User)
+                    .ThenInclude(u => u.EquippedStrengthItem)
+                .Include(ur => ur.User)
+                    .ThenInclude(u => u.EquippedEnduranceItem)
                 .Include(ur => ur.Room)
                 .FirstOrDefault(ur => ur.userid == userId && ur.roomid == roomId);
         }
@@ -66,7 +73,6 @@ namespace AA2_CS.Repository
             return _context.SaveChanges();
         }
 
-        // Para editar, necesitas identificar el registro original por sus dos claves
         public async Task<UserRoom?> Update(int userId, int roomId, UserRoom updatedUserRoom)
         {
             var existingUserRoom = await _context.UserRooms
@@ -76,7 +82,7 @@ namespace AA2_CS.Repository
             {
                 return null;
             }
-
+            
             await _context.SaveChangesAsync();
             return existingUserRoom;
         }

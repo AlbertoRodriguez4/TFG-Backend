@@ -19,19 +19,18 @@ namespace AA2_CS.Service
             return _userRoomRepository.GetAll();
         }
 
-        // Nuevo: Buscar todas las salas de un usuario
         public IEnumerable<UserRoom> FindByUserId(int userId)
         {
             return _userRoomRepository.FindByUserId(userId);
         }
 
-        // Nuevo: Buscar todos los usuarios de una sala
-        public IEnumerable<UserRoomResponseDTO> FindUsersByRoomId(int roomId)
+        // --- CAMBIO AQUÍ ---
+        // Antes devolvía UserRoomResponseDTO, ahora UserRoom
+        public IEnumerable<UserRoom> FindUsersByRoomId(int roomId)
         {
             return _userRoomRepository.FindUsersByRoomId(roomId);
         }
 
-        // Buscar una relación específica
         public UserRoom? FindByCompositeKey(int userId, int roomId)
         {
             return _userRoomRepository.FindByCompositeKey(userId, roomId);
@@ -42,13 +41,11 @@ namespace AA2_CS.Service
             return _userRoomRepository.Add(userRoom);
         }
 
-        // Actualizado para recibir ambos IDs
         public async Task<UserRoom?> Update(int userId, int roomId, UserRoom updatedUserRoom)
         {
             return await _userRoomRepository.Update(userId, roomId, updatedUserRoom);
         }
 
-        // Actualizado para recibir ambos IDs
         public int Delete(int userId, int roomId)
         {
             return _userRoomRepository.Delete(userId, roomId);
