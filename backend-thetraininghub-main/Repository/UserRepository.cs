@@ -1,8 +1,8 @@
 using AA2_CS.Database;
 using AA2_CS.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BCrypt.Net; // Necesario para BCrypt
+using Microsoft.EntityFrameworkCore; // Vital para usar .Include()
+using BCrypt.Net; 
 
 namespace AA2_CS.Repository
 {
@@ -25,7 +25,6 @@ namespace AA2_CS.Repository
             return entity.id;
         }
 
-
         public int Update(User entity)
         {
             var user = _context.Users.FirstOrDefault(u => u.id == entity.id);
@@ -34,8 +33,6 @@ namespace AA2_CS.Repository
                 user.name = entity.name;
                 user.email = entity.email;
                 
-                // OPCIONAL: Solo actualiza la contraseña si ha cambiado y no parece ya un hash
-                // Nota: Lo ideal es manejar el cambio de contraseña en un método separado.
                 if (!string.IsNullOrEmpty(entity.passwordhash) && entity.passwordhash != user.passwordhash)
                 {
                      user.passwordhash = BCrypt.Net.BCrypt.HashPassword(entity.passwordhash);
@@ -46,6 +43,10 @@ namespace AA2_CS.Repository
                 user.endurance = entity.endurance;
                 user.consistencystreak = entity.consistencystreak;
                 user.gold = entity.gold;
+                
+                // Actualizar referencias de equipo
+                user.equippedStrengthId = entity.equippedStrengthId;
+                user.equippedEnduranceId = entity.equippedEnduranceId;
 
                 _context.SaveChanges();
                 return 1;
@@ -62,7 +63,6 @@ namespace AA2_CS.Repository
             user.name = updatedUser.name;
             user.email = updatedUser.email;
 
-            // Lógica básica para actualizar password si viene uno nuevo en texto plano
             if (!string.IsNullOrEmpty(updatedUser.passwordhash) && updatedUser.passwordhash != user.passwordhash) 
             {
                  user.passwordhash = BCrypt.Net.BCrypt.HashPassword(updatedUser.passwordhash);
@@ -73,6 +73,10 @@ namespace AA2_CS.Repository
             user.endurance = updatedUser.endurance;
             user.consistencystreak = updatedUser.consistencystreak;
             user.gold = updatedUser.gold;
+            
+            // Actualizar referencias de equipo
+            user.equippedStrengthId = updatedUser.equippedStrengthId;
+            user.equippedEnduranceId = updatedUser.equippedEnduranceId;
 
             try
             {
@@ -97,25 +101,19 @@ namespace AA2_CS.Repository
             return 0;
         }
 
-        public List<UserDTO> FindAll()
+        // CAMBIADO: Devuelve List<User> en vez de DTO
+        public List<User> FindAll()
         {
-            return _context.Users.Select(user => new UserDTO
-            {
-                id = user.id,
-                name = user.name,
-                email = user.email,
-                passwordhash = user.passwordhash,
-                level = user.level,
-                strength = user.strength,
-                endurance = user.endurance,
-                consistencystreak = user.consistencystreak,
-                gold = user.gold
-            }).ToList();
+            return _context.Users.ToList();
         }
 
         public User FindById(int id)
         {
-            return _context.Users.FirstOrDefault(u => u.id == id);
+            // Recomendable añadir Includes aquí también si necesitas ver el equipo en el perfil individual
+            return _context.Users
+                .Include(u => u.EquippedStrengthItem)
+                .Include(u => u.EquippedEnduranceItem)
+                .FirstOrDefault(u => u.id == id);
         }
 
         public List<User> FindByCharacteristic(string name)
@@ -125,18 +123,16 @@ namespace AA2_CS.Repository
                 .ToList();
         }
 
-        // LOGICA DE LOGIN CAMBIADA
         public User Login(string email, string plainPassword)
         {
-            // 1. Buscar usuario solo por email
-            var user = _context.Users.FirstOrDefault(u => u.email == email);
+            // Añadimos Includes para que al loguearse el token pueda generarse con los items
+            var user = _context.Users
+                .Include(u => u.EquippedStrengthItem)
+                .Include(u => u.EquippedEnduranceItem)
+                .FirstOrDefault(u => u.email == email);
 
-            // 2. Si no existe, retornar null
             if (user == null) return null;
 
-            // 3. Verificar el hash
-            // plainPassword: la contraseña escrita en el login (ej: "123456")
-            // user.passwordhash: el hash guardado en la DB (ej: "$2a$11$Z...")
             bool isValid = BCrypt.Net.BCrypt.Verify(plainPassword, user.passwordhash);
 
             if (isValid)
@@ -149,31 +145,21 @@ namespace AA2_CS.Repository
 
         public User Register(User user)
         {
-            // ENCRIPTAR: Hasheamos la contraseña antes de guardar
             user.passwordhash = BCrypt.Net.BCrypt.HashPassword(user.passwordhash);
-
             _context.Users.Add(user);
             _context.SaveChanges();
             return user;
         }
 
-        public List<UserDTO> GetTopThreeUsers()
+        // --- CAMBIADO: Devuelve List<User> y usa .Include() ---
+        public List<User> GetTopThreeUsers()
         {
             return _context.Users
+                .Include(u => u.EquippedStrengthItem) // Carga el objeto de Fuerza
+                .Include(u => u.EquippedEnduranceItem) // Carga el objeto de Resistencia
                 .OrderByDescending(u => u.level)
                 .Take(3)
-                .Select(user => new UserDTO
-                {
-                    id = user.id,
-                    name = user.name,
-                    email = user.email,
-                    passwordhash = user.passwordhash,
-                    level = user.level,
-                    strength = user.strength,
-                    endurance = user.endurance,
-                    consistencystreak = user.consistencystreak,
-                    gold = user.gold
-                }).ToList();
+                .ToList();
         }
     }
 }

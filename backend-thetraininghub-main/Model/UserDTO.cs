@@ -11,5 +11,6 @@ namespace AA2_CS.Model
         public int endurance { get; set; } = 0;
         public int consistencystreak { get; set; } = 0;
         public int gold { get; set; } = 0;
+        
     }
 }

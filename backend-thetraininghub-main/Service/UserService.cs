@@ -7,21 +7,19 @@ namespace AA2_CS.Service
     public class UserService 
     {
         private readonly UserRepository _repository;
-        // 1. AÑADIMOS EL REPOSITORIO DE COMPRAS
         private readonly PurchaseRepository _purchaseRepository; 
 
         // CONSTANTES (Lógica de negocio)
         private const int BASE_XP = 100;
         private const double EXPONENT = 1.5;
 
-        // 2. ACTUALIZAMOS EL CONSTRUCTOR PARA INYECTAR PurchaseRepository
         public UserService(UserRepository repository, PurchaseRepository purchaseRepository)
         {
             _repository = repository;
             _purchaseRepository = purchaseRepository;
         }
 
-        // --- LÓGICA DE EXPERIENCIA (YA ESTABA) ---
+        // --- LÓGICA DE EXPERIENCIA ---
 
         public int GetXpRequiredForNextLevel(int currentLevel)
         {
@@ -53,16 +51,16 @@ namespace AA2_CS.Service
             _repository.Update(user); 
         }
 
-        // --- 3. NUEVOS MÉTODOS PARA EQUIPAR OBJETOS ---
+        // --- MÉTODOS PARA EQUIPAR OBJETOS ---
 
         public string EquipItem(int userId, int itemId)
         {
             // A. Buscar al usuario
             var user = _repository.FindById(userId);
             if (user == null) return "User not found";
-            Console.WriteLine($"Comprando item {itemId} para usuario {userId}");
-            var purchases = _purchaseRepository.FindByUserId(userId);
             
+            // B. Verificar compras
+            var purchases = _purchaseRepository.FindByUserId(userId);
             var purchase = purchases.FirstOrDefault(p => p.ItemId == itemId);
 
             if (purchase == null)
@@ -70,11 +68,15 @@ namespace AA2_CS.Service
                 return "No posees este objeto, debes comprarlo primero.";
             }
 
-            if (purchase.ItemType == "Strength" || purchase.ItemType == "Fuerza") 
+            // C. Verificar Tipo
+            // Usamos ToLower para evitar errores de mayúsculas/minúsculas
+            string type = purchase.ItemType.ToLower();
+
+            if (type == "strength" || type == "fuerza") 
             {
                 user.equippedStrengthId = itemId;
             }
-            else if (purchase.ItemType == "Endurance" || purchase.ItemType == "Resistencia")
+            else if (type == "endurance" || type == "resistencia")
             {
                 user.equippedEnduranceId = itemId;
             }
@@ -92,11 +94,13 @@ namespace AA2_CS.Service
             var user = _repository.FindById(userId);
             if (user == null) return "User not found";
 
-            if (type == "Strength" || type == "Fuerza") 
+            string typeLower = type.ToLower();
+
+            if (typeLower == "strength" || typeLower == "fuerza") 
             {
-                user.equippedStrengthId = null; // Quitar objeto (null)
+                user.equippedStrengthId = null;
             }
-            else if (type == "Endurance" || type == "Resistencia") 
+            else if (typeLower == "endurance" || typeLower == "resistencia") 
             {
                 user.equippedEnduranceId = null;
             }
@@ -110,7 +114,7 @@ namespace AA2_CS.Service
         }
 
         // ---------------------------------------------------
-        // MÉTODOS CRUD ESTÁNDAR (Sin cambios)
+        // MÉTODOS CRUD ESTÁNDAR 
 
         public int Add(User entity)
         {
@@ -132,7 +136,8 @@ namespace AA2_CS.Service
             return _repository.Delete(entity);
         }
 
-        public List<UserDTO> FindAll()
+        // --- CORRECCIÓN 1: Cambiado de UserDTO a User para coincidir con el Repo ---
+        public List<User> FindAll()
         {
             return _repository.FindAll();
         }
@@ -157,7 +162,8 @@ namespace AA2_CS.Service
             return _repository.Register(user);
         }
 
-        public List<UserDTO> GetTopThreeUsers()
+        // --- CORRECCIÓN 2: Cambiado de UserDTO a User para coincidir con el Repo ---
+        public List<User> GetTopThreeUsers()
         {
             return _repository.GetTopThreeUsers();
         }
