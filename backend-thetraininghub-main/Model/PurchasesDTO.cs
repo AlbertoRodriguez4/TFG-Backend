@@ -10,4 +10,5 @@ public class PurchaseDTO
     public int ItemBonus { get; set; }
     public int ItemPrice { get; set; }
     public DateTime PurchaseDate { get; set; }
+    public string? ImageUrl { get; set; } 
 }

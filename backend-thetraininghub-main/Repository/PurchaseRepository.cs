@@ -96,7 +96,9 @@ namespace AA2_CS.Repository
                                  ItemType = item.type,
                                  ItemBonus = item.bonus,
                                  ItemPrice = item.price,
+                                 ImageUrl = item.imageUrl,
                                  PurchaseDate = p.purchasedate
+
                              }).ToList();
 
             return purchases;
