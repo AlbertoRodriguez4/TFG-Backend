@@ -80,12 +80,18 @@ namespace AA2_CS.JWT
                 new Claim("gold", user.gold.ToString()),
                 new Claim("consistencystreak", user.consistencystreak.ToString()),
 
-                // --- NUEVOS CLAIMS DE EXPERIENCIA ---
+                // Claims de experiencia
                 new Claim("experience", user.experience.ToString()),       // XP Actual
                 new Claim("xpRequired", xpRequiredForNextLevel.ToString()), // Meta del nivel
                 new Claim("xpRemaining", xpRemaining.ToString()),            // Cuánto falta
-                new Claim("equippedStrengthItemId", user.equippedStrengthId.ToString()),
-                new Claim("equippedEnduranceItemId", user.equippedEnduranceId.ToString())
+                
+                // Items equipados
+                new Claim("equippedStrengthItemId", user.equippedStrengthId?.ToString() ?? ""),
+                new Claim("equippedEnduranceItemId", user.equippedEnduranceId?.ToString() ?? ""),
+                
+                // --- NUEVO CLAIM: AVATAR URL ---
+                // Si avatarUrl es null, devolvemos un string vacío para evitar excepciones
+                new Claim("avatarUrl", user.avatarUrl ?? "") 
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));

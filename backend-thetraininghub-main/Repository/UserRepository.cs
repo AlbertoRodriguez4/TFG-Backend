@@ -43,10 +43,14 @@ namespace AA2_CS.Repository
                 user.endurance = entity.endurance;
                 user.consistencystreak = entity.consistencystreak;
                 user.gold = entity.gold;
+                user.experience = entity.experience; // Opcional, pero buena práctica si cambia
                 
                 // Actualizar referencias de equipo
                 user.equippedStrengthId = entity.equippedStrengthId;
                 user.equippedEnduranceId = entity.equippedEnduranceId;
+                
+                // --- CAMBIO AÑADIDO: Guardar la nueva URL del avatar ---
+                user.avatarUrl = entity.avatarUrl;
 
                 _context.SaveChanges();
                 return 1;
@@ -73,10 +77,14 @@ namespace AA2_CS.Repository
             user.endurance = updatedUser.endurance;
             user.consistencystreak = updatedUser.consistencystreak;
             user.gold = updatedUser.gold;
+            user.experience = updatedUser.experience;
             
             // Actualizar referencias de equipo
             user.equippedStrengthId = updatedUser.equippedStrengthId;
             user.equippedEnduranceId = updatedUser.equippedEnduranceId;
+
+            // --- CAMBIO AÑADIDO: Guardar la nueva URL del avatar ---
+            user.avatarUrl = updatedUser.avatarUrl;
 
             try
             {
@@ -101,7 +109,6 @@ namespace AA2_CS.Repository
             return 0;
         }
 
-        // CAMBIADO: Devuelve List<User> en vez de DTO
         public List<User> FindAll()
         {
             return _context.Users.ToList();
@@ -109,7 +116,6 @@ namespace AA2_CS.Repository
 
         public User FindById(int id)
         {
-            // Recomendable añadir Includes aquí también si necesitas ver el equipo en el perfil individual
             return _context.Users
                 .Include(u => u.EquippedStrengthItem)
                 .Include(u => u.EquippedEnduranceItem)
@@ -125,7 +131,6 @@ namespace AA2_CS.Repository
 
         public User Login(string email, string plainPassword)
         {
-            // Añadimos Includes para que al loguearse el token pueda generarse con los items
             var user = _context.Users
                 .Include(u => u.EquippedStrengthItem)
                 .Include(u => u.EquippedEnduranceItem)
@@ -151,12 +156,11 @@ namespace AA2_CS.Repository
             return user;
         }
 
-        // --- CAMBIADO: Devuelve List<User> y usa .Include() ---
         public List<User> GetTopThreeUsers()
         {
             return _context.Users
-                .Include(u => u.EquippedStrengthItem) // Carga el objeto de Fuerza
-                .Include(u => u.EquippedEnduranceItem) // Carga el objeto de Resistencia
+                .Include(u => u.EquippedStrengthItem)
+                .Include(u => u.EquippedEnduranceItem)
                 .OrderByDescending(u => u.level)
                 .Take(3)
                 .ToList();
