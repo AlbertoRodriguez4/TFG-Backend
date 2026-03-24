@@ -165,5 +165,33 @@ namespace AA2_CS.Repository
                 .Take(3)
                 .ToList();
         }
+        public async Task<bool> ChangePassword(int userId, string currentPassword, string newPassword)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            
+            if (user == null)
+                return false; // Usuario no encontrado
+
+            // 1. Verificamos que la contraseña actual proporcionada coincida con el hash de la BD
+            bool isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(currentPassword, user.passwordhash);
+            
+            if (!isCurrentPasswordValid)
+                return false; // La contraseña actual no coincide
+
+            // 2. Si es válida, hasheamos la nueva contraseña y la guardamos
+            user.passwordhash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true; // Contraseña cambiada con éxito
+            }
+            catch (Exception ex)
+            {
+                // Aquí podrías loguear el error si tienes un logger configurado
+                Console.WriteLine($"Error al cambiar contraseña: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

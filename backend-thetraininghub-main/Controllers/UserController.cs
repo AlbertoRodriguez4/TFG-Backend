@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using AA2_CS.Model;
 using AA2_CS.Service;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 namespace AA2_CS.Controllers
 {
     [Route("api/[controller]")]
@@ -32,11 +33,24 @@ namespace AA2_CS.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = Roles.userMaster)]
-        public async Task<ActionResult<User>> UpdateUser(int id, User user)
+        [Authorize] 
+            public async Task<ActionResult<User>> UpdateUser(int id, User user)
         {
+            Console.WriteLine($"Received update request for user ID: {id}");
+            Console.WriteLine($"User data: {System.Text.Json.JsonSerializer.Serialize(user)}");
             try
             {
+                var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var currentUserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+                bool isSelfUpdate = currentUserIdClaim == id.ToString();
+                bool isAdmin = currentUserRole == Roles.userMaster;
+
+                if (!isSelfUpdate && !isAdmin)
+                {
+                    return Forbid(); 
+                }
+
                 var result = await _userService.UpdateById(id, user);
                 return result;
             }
@@ -141,6 +155,38 @@ namespace AA2_CS.Controllers
         {
             var result = _userService.UnequipItem(userId, type);
             return Ok(result);
+        }
+        [HttpPost("change-password")]
+        [Authorize] // Solo usuarios logueados
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            try
+            {
+                // Extraemos el ID del usuario directamente de su Token JWT por seguridad
+                var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                
+                if (!int.TryParse(userIdStr, out int userId))
+                {
+                    return Unauthorized("Token inválido o ID de usuario no encontrado.");
+                }
+
+                // Llamamos al servicio para hacer el cambio
+                bool success = await _userService.ChangePassword(userId, request.CurrentPassword, request.NewPassword);
+
+                if (success)
+                {
+                    return Ok(new { message = "Contraseña actualizada correctamente." });
+                }
+                else
+                {
+                    // Si devuelve false, es porque la contraseña actual era incorrecta (o el usuario no existe)
+                    return BadRequest("La contraseña actual proporcionada es incorrecta.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno al cambiar la contraseña: {ex.Message}");
+            }
         }
     }
 }

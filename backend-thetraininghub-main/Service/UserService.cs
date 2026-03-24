@@ -167,5 +167,9 @@ namespace AA2_CS.Service
         {
             return _repository.GetTopThreeUsers();
         }
+        public async Task<bool> ChangePassword(int userId, string currentPassword, string newPassword)
+        {
+            return await _repository.ChangePassword(userId, currentPassword, newPassword);
+        }
     }
 }
