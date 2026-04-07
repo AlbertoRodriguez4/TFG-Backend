@@ -17,9 +17,12 @@ namespace AA2_CS.Model
         public int experience { get; set; } = 0;
         public int? equippedStrengthId { get; set; }
         public int? equippedEnduranceId { get; set; }
-        
+
         // --- NUEVO CAMPO PARA LA FOTO DE PERFIL ---
-        public string? avatarUrl { get; set; } 
+        public string? avatarUrl { get; set; }
+
+        // --- CAMPO PARA VERIFICACIÓN DE EMAIL ---
+        public bool isEmailVerified { get; set; } = false; 
 
         [ForeignKey("equippedStrengthId")]
         public virtual Item? EquippedStrengthItem { get; set; }
@@ -30,7 +33,7 @@ namespace AA2_CS.Model
         public User() { }
 
         // Opcional: Actualizar el constructor si lo usas
-        public User(string name, string email, string passwordHash, int level, int strength, int endurance, int consistencyStreak, int gold, string role, int experience, int? equippedStrengthId = null, int? equippedEnduranceId = null, string? avatarUrl = null)
+        public User(string name, string email, string passwordHash, int level, int strength, int endurance, int consistencyStreak, int gold, string role, int experience, int? equippedStrengthId = null, int? equippedEnduranceId = null, string? avatarUrl = null, bool isEmailVerified = false)
         {
             this.name = name;
             this.email = email;
@@ -44,7 +47,8 @@ namespace AA2_CS.Model
             this.experience = experience;
             this.equippedStrengthId = equippedStrengthId;
             this.equippedEnduranceId = equippedEnduranceId;
-            this.avatarUrl = avatarUrl; 
+            this.avatarUrl = avatarUrl;
+            this.isEmailVerified = isEmailVerified;
         }
     }
 }

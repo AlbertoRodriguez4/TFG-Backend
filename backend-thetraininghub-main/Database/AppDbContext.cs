@@ -10,9 +10,11 @@ public class AppDbContext : DbContext
     public DbSet<Plan> Plans { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
+    public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<Room> Rooms { get; set; }
     public DbSet<UserRoom> UserRooms { get; set; }
     public DbSet<Model.Task> Tasks { get; set; }
+    public DbSet<EmailVerification> EmailVerifications { get; set; }
 
    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,6 +24,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Plan>().ToTable("plans");
         modelBuilder.Entity<Item>().ToTable("items");
         modelBuilder.Entity<Purchase>().ToTable("purchases");
+        modelBuilder.Entity<Subscription>().ToTable("subscriptions");
         modelBuilder.Entity<Room>().ToTable("rooms");
         modelBuilder.Entity<UserRoom>().ToTable("usersrooms");
         modelBuilder.Entity<Model.Task>().ToTable("tasks");
@@ -46,6 +49,33 @@ public class AppDbContext : DbContext
             .HasOne(ur => ur.Room)  // Relación con Room
             .WithMany()  // No necesidad de la propiedad de navegación en Room
             .HasForeignKey(ur => ur.roomid)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configuración para EmailVerification
+        modelBuilder.Entity<EmailVerification>().ToTable("emailverifications");
+
+        // Configuración para Subscription
+        modelBuilder.Entity<Subscription>()
+            .HasKey(s => s.id);
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.id).HasColumnName("id");
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.userid).HasColumnName("userid");
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.startDate).HasColumnName("startdate");
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.endDate).HasColumnName("enddate");
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.isActive).HasColumnName("isactive");
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.planType).HasColumnName("planType");
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.monthlyPrice).HasColumnName("monthlyPrice");
+
+        modelBuilder.Entity<Subscription>()
+            .HasOne(s => s.User)
+            .WithMany()
+            .HasForeignKey(s => s.userid)
             .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
