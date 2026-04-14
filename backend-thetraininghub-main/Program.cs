@@ -54,6 +54,10 @@ builder.Services.AddHttpClient<GeocodificacionRepository, GeocodificacionReposit
 builder.Services.AddScoped<GeocodificacionService, GeocodificacionService>();
 builder.Services.AddScoped<UserRoomRepository, UserRoomRepository>();
 builder.Services.AddScoped<UserRoomService, UserRoomService>();
+builder.Services.AddScoped<NotificationPreferenceRepository, NotificationPreferenceRepository>();
+builder.Services.AddScoped<NotificationPreferenceService, NotificationPreferenceService>();
+builder.Services.AddScoped<NotificationService, NotificationService>();
+builder.Services.AddHostedService<NotificationBackgroundService>();
 
 // Configuración de JWT para autenticación
 builder.Services.AddAuthentication("Bearer")

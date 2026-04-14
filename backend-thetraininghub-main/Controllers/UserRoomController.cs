@@ -11,10 +11,14 @@ namespace AA2_CS.Controllers
     public class UserRoomController : ControllerBase
     {
         private readonly UserRoomService _userRoomService;
+        private readonly NotificationService _notificationService;
+        private readonly RoomService _roomService;
 
-        public UserRoomController(UserRoomService userRoomService)
+        public UserRoomController(UserRoomService userRoomService, NotificationService notificationService, RoomService roomService)
         {
             _userRoomService = userRoomService;
+            _notificationService = notificationService;
+            _roomService = roomService;
         }
 
         // GET: api/UserRoom
@@ -79,6 +83,28 @@ namespace AA2_CS.Controllers
                 }
 
                 var result = _userRoomService.Add(userRoom);
+
+                // Enviar notificación de unión a sala (fire-and-forget)
+                if (result > 0)
+                {
+                    _ = System.Threading.Tasks.Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var room = _roomService.FindById(userRoom.roomid);
+                            if (room != null)
+                            {
+                                await _notificationService.SendRoomActivityNotificationIfNeeded(
+                                    userRoom.userid, room.name, "joined");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error al enviar notificación de unión a sala: {ex.Message}");
+                        }
+                    });
+                }
+
                 return result > 0 ? Ok(userRoom) : BadRequest("Failed to add user to room");
             }
             catch (Exception ex)

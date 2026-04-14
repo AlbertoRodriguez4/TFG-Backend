@@ -61,5 +61,15 @@ namespace AA2_CS.Repository
                 .OrderByDescending(t => t.createdat)
                 .FirstOrDefault();
         }
+
+        // Devuelve la fecha de la última tarea completada por el usuario (o null si no hay)
+        public DateTime? GetLastCompletedTaskDate(int userId)
+        {
+            return _context.Tasks
+                .Where(t => t.userId == userId && t.iscompleted)
+                .OrderByDescending(t => t.createdat)
+                .Select(t => (DateTime?)t.createdat)
+                .FirstOrDefault();
+        }
     }
 }

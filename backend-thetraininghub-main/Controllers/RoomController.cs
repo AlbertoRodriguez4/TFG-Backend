@@ -10,10 +10,12 @@ namespace AA2_CS.Controllers
     public class RoomController : ControllerBase
     {
         private readonly RoomService _roomService;
+        private readonly NotificationService _notificationService;
 
-        public RoomController(RoomService roomService)
+        public RoomController(RoomService roomService, NotificationService notificationService)
         {
             _roomService = roomService;
+            _notificationService = notificationService;
         }
 
         [HttpPost]
@@ -24,6 +26,21 @@ namespace AA2_CS.Controllers
             {
                 // request.room ya trae description y date automáticamente del JSON
                 var roomId = _roomService.CreateRoomWithUser(request.room, request.userid);
+
+                // Enviar notificación de creación de sala (fire-and-forget)
+                _ = System.Threading.Tasks.Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _notificationService.SendRoomActivityNotificationIfNeeded(
+                            request.userid, request.room.name, "created");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al enviar notificación de sala: {ex.Message}");
+                    }
+                });
+
                 return Ok(new { roomId });
             }
             catch (Exception ex)

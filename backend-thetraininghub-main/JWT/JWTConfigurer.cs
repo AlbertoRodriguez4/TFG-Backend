@@ -101,6 +101,7 @@ namespace AA2_CS.JWT
                 issuer: _config["JwtSettings:Issuer"],
                 audience: _config["JwtSettings:Audience"],
                 claims: claims,
+                expires: DateTime.UtcNow.AddDays(7), // Token válido por 7 días
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

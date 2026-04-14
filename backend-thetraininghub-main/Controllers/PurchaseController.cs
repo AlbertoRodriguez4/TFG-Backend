@@ -13,12 +13,16 @@ namespace AA2_CS.Controllers
     {
         private readonly PurchaseService _purchaseService;
         private readonly AuthService _authService;
+        private readonly NotificationService _notificationService;
+        private readonly ItemService _itemService;
 
         // Constructor del controlador, se inyecta el servicio de compras
-        public PurchaseController(PurchaseService purchaseService, AuthService authService)
+        public PurchaseController(PurchaseService purchaseService, AuthService authService, NotificationService notificationService, ItemService itemService)
         {
             _purchaseService = purchaseService;
             _authService = authService;
+            _notificationService = notificationService;
+            _itemService = itemService;
         }
 
         // Ruta para obtener todas las compras
@@ -69,7 +73,26 @@ namespace AA2_CS.Controllers
         {
             try
             {
+                var item = _itemService.FindById(purchase.itemid);
                 var id = _purchaseService.Add(purchase); // Agrega una nueva compra
+
+                // Enviar recibo de compra por email (fire-and-forget)
+                if (item != null)
+                {
+                    _ = System.Threading.Tasks.Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _notificationService.SendPurchaseReceiptIfNeeded(
+                                purchase.userid, item.name, item.type, item.bonus, item.price);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error al enviar notificación de compra: {ex.Message}");
+                        }
+                    });
+                }
+
                 return Ok(new { id });
             }
             catch (InvalidOperationException ex)

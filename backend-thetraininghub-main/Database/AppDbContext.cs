@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<UserRoom> UserRooms { get; set; }
     public DbSet<Model.Task> Tasks { get; set; }
     public DbSet<EmailVerification> EmailVerifications { get; set; }
+    public DbSet<NotificationPreference> NotificationPreferences { get; set; }
 
    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -53,6 +54,17 @@ public class AppDbContext : DbContext
 
         // Configuración para EmailVerification
         modelBuilder.Entity<EmailVerification>().ToTable("emailverifications");
+
+        // Configuración para NotificationPreference
+        modelBuilder.Entity<NotificationPreference>().ToTable("notificationpreferences");
+        modelBuilder.Entity<NotificationPreference>()
+            .HasIndex(np => np.userid)
+            .IsUnique();
+        modelBuilder.Entity<NotificationPreference>()
+            .HasOne(np => np.User)
+            .WithMany()
+            .HasForeignKey(np => np.userid)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Configuración para Subscription
         modelBuilder.Entity<Subscription>()
